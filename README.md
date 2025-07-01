@@ -103,4 +103,3 @@ mkdocs serve --verbose
 - Documentation site: https://isaac-for-healthcare.github.io/i4h/
 - GitHub repository: https://github.com/isaac-for-healthcare/i4h-docs
 - Issue tracker: https://github.com/isaac-for-healthcare/i4h-docs/issues
-# i4h-docs
