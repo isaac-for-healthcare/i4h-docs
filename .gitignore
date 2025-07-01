@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+*.egg-info/
+dist/
+build/
+
+# MkDocs
+site/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local files
+*.local
+.env
+
+# Documentation build artifacts
+docs/documentation-needs-report.md
+
+# Private repositories (cloned during CI)
+i4h-asset-catalog/
+i4h-sensor-simulation/
+i4h-workflows/

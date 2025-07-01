@@ -1,0 +1,61 @@
+# README Synchronization Configuration
+# Maps README.md files from i4h-* repositories to documentation structure
+#
+# Format:
+# repositories:
+#   - name: repository-name
+#     main_readme:
+#       source: path/to/source/README.md
+#       target: docs/path/to/target.md
+#     sub_readmes:
+#       - source: path/to/another/README.md
+#         target: docs/path/to/another-target.md
+
+repositories:
+  # Asset Catalog Repository
+  - name: i4h-asset-catalog
+    main_readme:
+      source: i4h-asset-catalog/README.md
+      target: docs/asset-catalog/index.md
+
+  # Sensor Simulation Repository
+  - name: i4h-sensor-simulation
+    sub_readmes:
+      - source: i4h-sensor-simulation/ultrasound-raytracing/README.md
+        target: docs/sensor-simulation/ultrasound-raytracing.md
+
+  # Workflows Repository
+  - name: i4h-workflows
+    sub_readmes:
+      # DDS and communication
+      - source: i4h-workflows/workflows/robotic_ultrasound/scripts/dds/README.md
+        target: docs/how-to/how-to-dds-troubleshooting.md
+      
+      # Training guides
+      - source: i4h-workflows/workflows/robotic_ultrasound/scripts/training/gr00t_n1/README.md
+        target: docs/how-to/how-to-train-gr00t.md
+      
+      - source: i4h-workflows/workflows/robotic_ultrasound/scripts/training/pi_zero/README.md
+        target: docs/how-to/how-to-train-pi-zero.md
+      
+      # How-to guides from tutorials
+      - source: i4h-workflows/tutorials/assets/bring_your_own_patient/README.md
+        target: docs/how-to/how-to-bring-your-own-patient.md
+      
+      - source: i4h-workflows/tutorials/assets/bring_your_own_robot/Virtual_Incision_MIRA/README.md
+        target: docs/how-to/how-to-mira-teleoperation.md
+      
+      - source: i4h-workflows/tutorials/assets/bring_your_own_xr/README.md
+        target: docs/how-to/how-to-bring-your-own-xr.md
+      
+      # Sync Franka ultrasound probe guide
+      - source: i4h-workflows/tutorials/assets/bring_your_own_robot/replace_franka_hand_with_ultrasound_probe.md
+        target: docs/how-to/how-to-franka-ultrasound-probe.md
+      
+      # Robotic Surgery components
+      - source: i4h-workflows/workflows/robotic_surgery/scripts/simulation/README.md
+        target: docs/workflows/robotic-surgery-surgical-tasks.md
+      
+      # Visualization tools
+      - source: i4h-workflows/workflows/robotic_ultrasound/scripts/utils/README.md
+        target: docs/how-to/how-to-visualization-tools.md

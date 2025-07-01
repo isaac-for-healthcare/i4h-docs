@@ -1,0 +1,69 @@
+/* Custom styles for i4h documentation - Minimal theme */
+
+/* Make site name clickable as home link - only the actual site title */
+.md-header__topic:first-child .md-ellipsis {
+    cursor: pointer !important;
+}
+
+/* Add subtle hover effect to site name */
+.md-header__topic:first-child .md-ellipsis:hover {
+    opacity: 0.7 !important;
+}
+
+/* Simple active state */
+.md-nav__link--active {
+    color: var(--md-primary-fg-color) !important;
+    font-weight: 500 !important;
+}
+
+/* Clean hover effect */
+.md-nav__link:hover {
+    background-color: var(--md-default-bg-color--lighter) !important;
+    transition: background-color 0.2s ease !important;
+}
+
+/* Minimal section headers in sidebar */
+.md-nav--primary .md-nav__item--section > .md-nav__link {
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    margin-top: 1rem !important;
+    margin-bottom: 0.25rem !important;
+}
+
+/* Simple indentation for nested items */
+.md-nav__item .md-nav__item .md-nav__link {
+    padding-left: 1.2rem !important;
+}
+
+/* Clean tab styling */
+.md-tabs__link--active {
+    font-weight: 600 !important;
+}
+
+/* Improve content spacing */
+.md-content h3 {
+    margin-top: 2rem !important;
+    margin-bottom: 1rem !important;
+}
+
+.md-content ul li {
+    margin-bottom: 0.5rem !important;
+    line-height: 1.6 !important;
+}
+
+/* Card grid spacing */
+.grid.cards {
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+}
+
+/* Reduce top margin for card headers */
+.grid.cards h3 {
+    margin-top: 0 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+/* Ensure code blocks have proper contrast */
+.highlight code {
+    font-size: 0.85em !important;
+}

@@ -1,0 +1,172 @@
+site_name: Isaac for Healthcare
+site_description: Documentation for the Isaac for Healthcare (i4h) framework
+site_author: i4h Team
+site_url: https://isaac-for-healthcare.github.io/i4h/
+repo_url: https://github.com/isaac-for-healthcare/i4h-docs
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - navigation.expand
+    - navigation.path
+    - navigation.indexes
+    - toc.follow
+    - content.code.copy
+    - content.code.select
+    - content.code.annotate
+    - content.tabs.link
+  palette:
+    # Automatic color scheme based on system preference
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/link
+        name: Switch to light mode
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: green
+      accent: light green
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to dark mode
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: green
+      accent: light green
+      toggle:
+        icon: material/toggle-switch-off
+        name: Switch to system preference
+  icon:
+    logo: material/medical-bag
+  font:
+    text: Roboto
+    code: Roboto Mono
+
+extra_css:
+  - stylesheets/custom.css
+
+extra_javascript:
+  - javascripts/extra.js
+
+plugins:
+  - search
+  
+hooks:
+  - scripts/sync_readmes_simple.py
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - attr_list
+  - md_in_html
+  - tables
+  - footnotes
+  - def_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+nav:
+  - Home: 
+    - Overview: index.md
+    - Workflows: workflows/index.md
+    - Asset Catalog: asset-catalog/index.md
+    - Sensor Simulation: sensor-simulation/index.md
+    - How-to Guides: how-to/index.md
+    - Reference: reference/index.md
+    
+  - Workflows:
+    - Overview: workflows/index.md
+    - Robotic Ultrasound: 
+      - Overview: workflows/robotic-ultrasound.md
+      - Quick Start: workflows/robotic-ultrasound-quick-start.md
+      - Simulation & Scanning: workflows/robotic-ultrasound-simulation.md
+      - Real-time Communication: workflows/robotic-ultrasound-dds-communication.md
+      - Holoscan Applications: workflows/robotic-ultrasound-holoscan-apps.md
+      - AI Policy Runner: workflows/robotic-ultrasound-policy-runner.md
+      - Training & Customization: 
+        - Overview: workflows/robotic-ultrasound-training.md
+        - PI-Zero Training: how-to/how-to-train-pi-zero.md
+        - GR00T-N1 Training: how-to/how-to-train-gr00t.md
+      - Visualization Tools: workflows/robotic-ultrasound-visualization-tools.md
+    - Robotic Surgery: 
+      - Overview: workflows/robotic-surgery.md
+      - Quick Start: workflows/robotic-surgery-quick-start.md
+      - Surgical Tasks: workflows/robotic-surgery-surgical-tasks.md
+    - Telesurgery: 
+      - Overview: workflows/telesurgery.md
+      - Quick Start: workflows/telesurgery-quick-start.md
+      - Patient-Side Setup: workflows/telesurgery-patient-setup.md
+      - Surgeon-Side Setup: workflows/telesurgery-surgeon-setup.md
+      - Network & Communication: workflows/telesurgery-network-setup.md
+      - Video Streaming: workflows/telesurgery-video-streaming.md
+      - Edge Deployment: workflows/telesurgery-edge-deployment.md
+  
+  - Asset Catalog:
+    - Overview: asset-catalog/index.md
+    - Available Assets: asset-catalog/available-assets.md
+    - Download Assets: asset-catalog/download-assets.md
+    
+  - Sensor Simulation:
+    - Overview: sensor-simulation/index.md
+    - Ultrasound Simulation: sensor-simulation/ultrasound-raytracing.md
+    - Camera & Depth Sensors: sensor-simulation/cameras.md
+    - Custom Sensors: how-to/how-to-custom-sensors.md
+    
+  - How-to Guides:
+    - Overview: how-to/index.md
+    - Simulation:
+      - Custom Sensors: how-to/how-to-custom-sensors.md
+    - Robots:
+      - DDS Troubleshooting: how-to/how-to-dds-troubleshooting.md
+      - MIRA Robot Teleoperation: how-to/how-to-mira-teleoperation.md
+      - Replace Franka Hand with Ultrasound: how-to/how-to-franka-ultrasound-probe.md
+    - Assets:
+      - Bring Your Own Patient: how-to/how-to-bring-your-own-patient.md
+      - Bring Your Own Robot: how-to/how-to-bring-your-own-robot.md
+      - Bring Your Own XR: how-to/how-to-bring-your-own-xr.md
+    - Machine Learning:
+      - Train GR00T Models: how-to/how-to-train-gr00t.md
+      - Train Pi-Zero Models: how-to/how-to-train-pi-zero.md
+    - Workflows:
+      - Surgery State Machines: how-to/how-to-surgery-state-machines.md
+      - Visualization Tools: how-to/how-to-visualization-tools.md
+      
+  - Reference:
+    - Overview: reference/index.md
+    - Changelog: reference/changelog.md
+    - Asset Catalog API: reference/reference-asset-catalog-api.md
+    - Robotic Ultrasound API: reference/reference-robotic-ultrasound-api.md
+    - Robotic Surgery API: reference/reference-robotic-surgery-api.md
+    - Hardware Integration: reference/reference-hardware-integration.md
+
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/isaac-for-healthcare
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/nvidia
+
+copyright: Copyright &copy; 2025 - 2025 NVIDIA Corporation
