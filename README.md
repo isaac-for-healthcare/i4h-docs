@@ -49,9 +49,9 @@ The documentation follows the [Diátaxis framework](https://diataxis.fr/) princi
   - `reference/` - **Technical Reference**: APIs, setup guides, and specifications
   - `assets/` - Images and static resources
 - `scripts/` - Documentation maintenance tools
-  - `sync_readmes_simple.py` - Synchronizes README files from source repositories
+  - `sync_readmes.py` - Synchronizes README files from source repositories
   - `readme-sync-config.yml` - Configuration for README synchronization
-  - `fix_images.py` - Fixes image paths after synchronization
+  - `sync_readmes.py` - Synchronizes README files and optionally fixes image paths
 - `mkdocs.yml` - MkDocs configuration
 - `.github/workflows/` - GitHub Actions for automated deployment
 
@@ -76,6 +76,26 @@ The documentation is automatically built and deployed through GitHub Actions:
 
 ## Local Development
 
+### Content Synchronization
+
+To sync README files from source repositories:
+
+```bash
+# Clone source repositories first (required)
+git clone https://github.com/isaac-for-healthcare/i4h-asset-catalog.git
+git clone https://github.com/isaac-for-healthcare/i4h-sensor-simulation.git
+git clone https://github.com/isaac-for-healthcare/i4h-workflows.git
+
+# Sync content from source repositories
+python scripts/sync_readmes.py
+
+# Preview changes without modifying files
+python scripts/sync_readmes.py --dry-run
+
+# Fix broken images in all markdown files (manual repair tool)
+python scripts/sync_readmes.py --fix-all-images
+```
+
 ### Advanced Options
 
 ```bash
@@ -94,8 +114,8 @@ mkdocs serve --verbose
 
 ### Troubleshooting
 
-- **Missing content**: Ensure private repositories are cloned if running sync locally
-- **Image issues**: Run `python scripts/fix_images.py` after syncing
+- **Missing repositories**: Ensure source repositories are cloned before running sync
+- **Image issues**: Use `python scripts/sync_readmes.py --fix-all-images` for manual image repair
 - **Build errors**: Check for broken links or missing files with `mkdocs build --strict`
 
 ## Support

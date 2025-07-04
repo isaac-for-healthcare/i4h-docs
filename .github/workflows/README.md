@@ -61,7 +61,7 @@ pip install -r requirements.txt
 pip install pyyaml
 
 # Run sync
-python scripts/sync_readmes_simple.py --verbose
+python scripts/sync_readmes.py --verbose
 
 # Build and serve
 mkdocs build

@@ -11,6 +11,17 @@
 #       - source: path/to/another/README.md
 #         target: docs/path/to/another-target.md
 
+# Content length thresholds (in characters)
+content_thresholds:
+  minimum_length: 500          # Files below this need documentation
+  critical_threshold: 100      # Files below this are marked as critical
+
+# Repository URLs for source attribution
+repository_urls:
+  i4h-asset-catalog: https://github.com/isaac-for-healthcare/i4h-asset-catalog
+  i4h-sensor-simulation: https://github.com/isaac-for-healthcare/i4h-sensor-simulation
+  i4h-workflows: https://github.com/isaac-for-healthcare/i4h-workflows
+
 repositories:
   # Asset Catalog Repository
   - name: i4h-asset-catalog

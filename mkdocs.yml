@@ -64,7 +64,7 @@ plugins:
   - search
   
 hooks:
-  - scripts/sync_readmes_simple.py
+  - scripts/sync_readmes.py
 
 markdown_extensions:
   - admonition

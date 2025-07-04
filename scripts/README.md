@@ -4,37 +4,34 @@ This directory contains scripts for maintaining the i4h documentation.
 
 ## Scripts
 
-### sync_readmes_simple.py
+### sync_readmes.py
 Main script for synchronizing README files from source repositories to documentation.
-- **Usage**: `python scripts/sync_readmes_simple.py`
-- **Config**: Uses `readme-sync-config.yml`
-- **Purpose**: Copies README content from i4h-* repositories to docs/ with proper attribution headers
-- **Note**: This script is referenced in mkdocs.yml and runs automatically on builds
-
-### fix_images.py
-Script for fixing broken image references in documentation.
 - **Usage**: 
-  - `python scripts/fix_images.py` - Fix all broken images
-  - `python scripts/fix_images.py --dry-run` - Preview changes without modifying files
-  - `python scripts/fix_images.py --file /path/to/file.md` - Fix specific file
+  - `python scripts/sync_readmes.py` - Sync README files (recommended for CI/CD)
+  - `python scripts/sync_readmes.py --dry-run` - Preview changes without modifying files
+  - `python scripts/sync_readmes.py --fix-all-images` - Also fix broken images in ALL markdown files (manual repair)
+  - `python scripts/sync_readmes.py --fix-all-images --dry-run` - Preview all changes including image fixes
+- **Config**: Uses `readme-sync-config.yml`
 - **Purpose**: 
-  - Finds broken image references in markdown files
-  - Locates source images in i4h-* repositories
-  - Copies images to appropriate docs/ locations
-  - Updates references to use relative paths
+  - Copies README content from i4h-* repositories to docs/ with proper attribution headers
+  - Fixes image references in synced files automatically
+  - Optionally scans and fixes broken image references in all markdown files
+  - Locates source images in i4h-* repositories and copies them to docs/assets/images/
+  - Updates image references to use correct relative paths
+- **Note**: This script runs automatically in CI/CD builds (without --fix-all-images)
 
 ### readme-sync-config.yml
 Configuration file that maps source README files to documentation pages.
 - **Format**: YAML with source/target mappings
-- **Used by**: sync_readmes_simple.py
+- **Used by**: sync_readmes.py
 - **Structure**:
   - Maps README files from i4h-* repos to docs/ structure
   - Excludes test directories and placeholder files
 
 ## Workflow
 
-1. **Sync READMEs**: Run `sync_readmes_simple.py` to pull latest README content
-2. **Fix Images**: Run `fix_images.py` to ensure all images are properly copied and referenced
+1. **Regular Sync**: Run `sync_readmes.py` to pull latest README content and fix images in synced files
+2. **Manual Image Repair**: Run `sync_readmes.py --fix-all-images` if you need to fix broken images in manually created documentation files
 
 ## Notes
 

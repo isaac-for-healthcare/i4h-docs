@@ -61,12 +61,7 @@ jobs:
       # Run the sync script to pull content from source repos
       - name: Sync README files
         run: |
-          python scripts/sync_readmes_simple.py --verbose
-
-      # Fix image paths
-      - name: Fix image paths
-        run: |
-          python scripts/fix_images.py
+          python scripts/sync_readmes.py
 
       # Build the documentation
       - name: Build documentation
