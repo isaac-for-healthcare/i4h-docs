@@ -45,13 +45,13 @@ The documentation follows the [Diátaxis framework](https://diataxis.fr/) princi
     - Telesurgery - Remote surgical operation
   - `asset-catalog/` - **Resources**: Pre-built simulation assets and AI models
   - `sensor-simulation/` - **Capabilities**: Physics-based medical sensor emulation
-  - `how-to/` - **Task Guides**: Step-by-step instructions for specific tasks
-  - `reference/` - **Technical Reference**: APIs, setup guides, and specifications
+  - `models/` - **AI Models & Policies**: Pre-trained models and control policies
+  - `sdg/` - **Synthetic Data Generation**: Tools for creating training data
   - `assets/` - Images and static resources
 - `scripts/` - Documentation maintenance tools
   - `sync_readmes.py` - Synchronizes README files from source repositories
   - `readme-sync-config.yml` - Configuration for README synchronization
-  - `sync_readmes.py` - Synchronizes README files and optionally fixes image paths
+  - `license_header_validator.py` - Validates and adds license headers to code files
 - `mkdocs.yml` - MkDocs configuration
 - `.github/workflows/` - GitHub Actions for automated deployment
 
@@ -59,17 +59,23 @@ The documentation follows the [Diátaxis framework](https://diataxis.fr/) princi
 
 The documentation is automatically built and deployed through GitHub Actions:
 
-1. **On every push to main**, the workflow:
+1. **Automated triggers**:
+   - On every push to main
+   - Weekly on Mondays at 00:00 UTC
+   - Manual workflow dispatch
+
+2. **The workflow**:
    - Clones the three source repositories (i4h-asset-catalog, i4h-sensor-simulation, i4h-workflows)
-   - Runs the sync script to pull README content into the docs structure
+   - Runs the sync script to pull latest README content
+   - Validates all Python/shell files have proper license headers
    - Builds the MkDocs site
    - Deploys to GitHub Pages at https://isaac-for-healthcare.github.io/i4h/
 
-2. **Content synchronization** is configured in `scripts/readme-sync-config.yml`, which maps:
+3. **Content synchronization** is configured in `scripts/readme-sync-config.yml`, which maps:
    - Source README files from the three repositories
    - Target locations in the documentation structure
 
-3. **To update documentation**:
+4. **To update documentation**:
    - Direct edits: Modify files in `docs/` directory
    - Synced content: Update README files in the source repositories
    - Navigation: Edit the `nav` section in `mkdocs.yml`
@@ -111,15 +117,3 @@ mkdocs build --strict
 # Verbose output
 mkdocs serve --verbose
 ```
-
-### Troubleshooting
-
-- **Missing repositories**: Ensure source repositories are cloned before running sync
-- **Image issues**: Use `python scripts/sync_readmes.py --fix-all-images` for manual image repair
-- **Build errors**: Check for broken links or missing files with `mkdocs build --strict`
-
-## Support
-
-- Documentation site: https://isaac-for-healthcare.github.io/i4h/
-- GitHub repository: https://github.com/isaac-for-healthcare/i4h-docs
-- Issue tracker: https://github.com/isaac-for-healthcare/i4h-docs/issues

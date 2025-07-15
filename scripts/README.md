@@ -18,11 +18,13 @@ Main script for synchronizing README files from source repositories to documenta
   - Optionally scans and fixes broken image references in all markdown files
   - Locates source images in i4h-* repositories and copies them to docs/assets/images/
   - Updates image references to use correct relative paths
-- **Note**: This script runs automatically in CI/CD builds (without --fix-all-images)
+- **Note**: This script runs automatically in CI/CD builds, pulling latest content weekly
 
 ### license_header_validator.py
 Script for validating and adding SPDX license headers to code files.
-- **Usage**: `python scripts/license_header_validator.py`
+- **Usage**: 
+  - `python scripts/license_header_validator.py` - Add missing headers to files
+  - `python scripts/license_header_validator.py --check` - Check mode for CI/CD (fails if headers missing)
 - **Target Files**: Python (.py) and shell (.sh) files only
 - **Config**: Uses `readme-sync-config.yml` to automatically exclude i4h-* repository directories
 - **Purpose**: 
@@ -30,6 +32,8 @@ Script for validating and adding SPDX license headers to code files.
   - Adds Apache 2.0 license headers with proper SPDX identifiers
   - Handles shebang lines correctly by placing headers after them
   - Automatically excludes directories from readme-sync-config.yml
+  - In check mode, exits with error code 1 if any files are missing headers
+- **Note**: This script runs automatically in CI/CD builds in check mode
 
 ### readme-sync-config.yml
 Configuration file that maps source README files to documentation pages.
