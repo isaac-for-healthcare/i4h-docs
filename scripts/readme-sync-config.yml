@@ -38,35 +38,56 @@ repositories:
   # Workflows Repository
   - name: i4h-workflows
     sub_readmes:
-      # DDS and communication
-      - source: i4h-workflows/workflows/robotic_ultrasound/scripts/dds/README.md
-        target: docs/how-to/how-to-dds-troubleshooting.md
-      
-      # Training guides
+      # Training guides (moved to workflows)
       - source: i4h-workflows/workflows/robotic_ultrasound/scripts/training/gr00t_n1/README.md
-        target: docs/how-to/how-to-train-gr00t.md
+        target: docs/workflows/robotic-ultrasound-train-gr00t.md
       
       - source: i4h-workflows/workflows/robotic_ultrasound/scripts/training/pi_zero/README.md
-        target: docs/how-to/how-to-train-pi-zero.md
+        target: docs/workflows/robotic-ultrasound-train-pi-zero.md
       
-      # How-to guides from tutorials
+      # Tutorials (moved to workflows/tutorials)
       - source: i4h-workflows/tutorials/assets/bring_your_own_patient/README.md
-        target: docs/how-to/how-to-bring-your-own-patient.md
+        target: docs/workflows/tutorials/bring-your-own-patient.md
       
       - source: i4h-workflows/tutorials/assets/bring_your_own_robot/Virtual_Incision_MIRA/README.md
-        target: docs/how-to/how-to-mira-teleoperation.md
+        target: docs/workflows/tutorials/mira-teleoperation.md
       
       - source: i4h-workflows/tutorials/assets/bring_your_own_xr/README.md
-        target: docs/how-to/how-to-bring-your-own-xr.md
+        target: docs/workflows/tutorials/bring-your-own-xr.md
       
       # Sync Franka ultrasound probe guide
       - source: i4h-workflows/tutorials/assets/bring_your_own_robot/replace_franka_hand_with_ultrasound_probe.md
-        target: docs/how-to/how-to-franka-ultrasound-probe.md
+        target: docs/workflows/tutorials/franka-ultrasound-probe.md
       
       # Robotic Surgery components
-      - source: i4h-workflows/workflows/robotic_surgery/scripts/simulation/README.md
-        target: docs/workflows/robotic-surgery-surgical-tasks.md
+      - source: i4h-workflows/workflows/robotic_surgery/README.md
+        target: docs/workflows/robotic-surgery-quick-start.md
       
-      # Visualization tools
+      - source: i4h-workflows/workflows/robotic_surgery/scripts/simulation/scripts/environments/state_machine/README.md
+        target: docs/workflows/robotic-surgery-state-machine.md
+      
+      - source: i4h-workflows/workflows/robotic_surgery/scripts/simulation/scripts/reinforcement_learning/rsl_rl/README.md
+        target: docs/workflows/robotic-surgery-reinforcement-learning.md
+      
+      # Robotic Ultrasound components
+      - source: i4h-workflows/workflows/robotic_ultrasound/README.md
+        target: docs/workflows/robotic-ultrasound-quick-start.md
+      
+      - source: i4h-workflows/workflows/robotic_ultrasound/scripts/simulation/README.md
+        target: docs/workflows/robotic-ultrasound-simulation.md
+      
+      - source: i4h-workflows/workflows/robotic_ultrasound/scripts/dds/README.md
+        target: docs/workflows/robotic-ultrasound-dds-communication.md
+      
+      - source: i4h-workflows/workflows/robotic_ultrasound/scripts/holoscan_apps/README.md
+        target: docs/workflows/robotic-ultrasound-holoscan-apps.md
+      
+      - source: i4h-workflows/workflows/robotic_ultrasound/scripts/policy_runner/README.md
+        target: docs/workflows/robotic-ultrasound-policy-runner.md
+      
       - source: i4h-workflows/workflows/robotic_ultrasound/scripts/utils/README.md
-        target: docs/how-to/how-to-visualization-tools.md
+        target: docs/workflows/robotic-ultrasound-visualization-tools.md
+      
+      # Telesurgery components
+      - source: i4h-workflows/workflows/telesurgery/README.md
+        target: docs/workflows/telesurgery-quick-start.md

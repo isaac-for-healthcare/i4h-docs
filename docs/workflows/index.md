@@ -12,6 +12,8 @@ Workflows are pre-built, modular robotics applications that demonstrate the full
 - **Hardware Integration**: Recipes for connecting to real robots and sensors
 - **Deployment Guides**: Instructions for edge deployment with Holoscan
 
+![Workflow Overview](../assets/images/workflow.png)
+
 ---
 
 ## Available Workflows
@@ -60,12 +62,14 @@ Workflows are pre-built, modular robotics applications that demonstrate the full
 
 ## Extend the Platform
 
-Isaac for Healthcare is designed to be extensible. Bring your own assets and hardware:
+Isaac for Healthcare is designed to be extensible. Learn how to customize and extend the platform:
 
-**Custom Assets:**
+**Tutorials:**
 
-- [Bring Your Own Patient](../how-to/how-to-bring-your-own-patient.md) - Convert medical imaging to simulation
-- [Bring Your Own Robot](../how-to/how-to-bring-your-own-robot.md) - Integrate custom platforms
-- [Bring Your Own XR](../how-to/how-to-bring-your-own-xr.md) - Mixed reality devices
+- [Bring Your Own Patient](tutorials/bring-your-own-patient.md) - Convert medical imaging to simulation
+- [Bring Your Own XR](tutorials/bring-your-own-xr.md) - Mixed reality devices
+- **Bring Your Own Robot** - Integrate custom platforms
+    - [MIRA Robot Teleoperation](tutorials/mira-teleoperation.md) - Remote operation of MIRA surgical robot
+    - [Replace Franka Hand with Ultrasound](tutorials/franka-ultrasound-probe.md) - Hardware modification guide
 
-These guides show how to extend any workflow with your own patients, robots, and interaction devices.
+These tutorials show how to extend any workflow with your own hardware, patients, robots, and interaction devices.

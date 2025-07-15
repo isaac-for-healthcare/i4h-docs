@@ -171,16 +171,9 @@ class ReadmeSynchronizer:
             content_length = len(content.strip())
             needs_documentation = content_length < self.min_content_length
             
-            # Generate frontmatter
-            frontmatter = self._generate_frontmatter(source_path, target_path)
             
-            # Generate attribution
-            attribution = self._generate_attribution(source_path)
-            
-            # Add TODO warning if content is minimal
-            todo_warning = ""
+            # Track files that need documentation
             if needs_documentation:
-                todo_warning = self._generate_todo_warning(source_path, content_length)
                 self.stats['needs_content'].append({
                     'source': source,
                     'target': target,
@@ -188,15 +181,8 @@ class ReadmeSynchronizer:
                 })
                 self.stats['warnings'] += 1
             
-            # Combine content
-            final_content = f"{frontmatter}\n\n{attribution}\n"
-            if todo_warning:
-                final_content += f"\n{todo_warning}\n"
-            final_content += f"\n{content}"
-            
-            # Add note at end if content is minimal
-            if needs_documentation:
-                final_content += f"\n\n---\n\n*Note: This documentation page requires additional content from the engineering team. The current source README file contains only {content_length} characters.*"
+            # Use the content as-is
+            final_content = content
             
             if not dry_run:
                 # Ensure target directory exists
@@ -214,34 +200,8 @@ class ReadmeSynchronizer:
             logger.error(f"Failed to process {source_path}: {e}")
             self.stats['errors'] += 1
     
-    def _generate_frontmatter(self, source_path: Path, target_path: Path) -> str:
-        """Generate YAML frontmatter for the documentation file"""
-        relative_source = source_path.relative_to(self.base_path)
-        title = self._extract_title_from_path(source_path)
-        
-        frontmatter = f"""---
-title: {title}
-source: {relative_source}
----"""
-        return frontmatter
     
-    def _generate_attribution(self, source_path: Path) -> str:
-        """Generate attribution notice for synchronized content"""
-        relative_source = source_path.relative_to(self.base_path)
-        repo_url = self._get_repo_url(source_path)
-        
-        return f"""!!! info "Source"
-    This content is synchronized from [`{relative_source}`]({repo_url})
     
-    To make changes, please edit the source file and run the synchronization script."""
-    
-    def _generate_todo_warning(self, source_path: Path, content_length: int) -> str:
-        """Generate TODO warning for minimal content"""
-        relative_source = source_path.relative_to(self.base_path)
-        
-        return f"""!!! warning "TODO: Documentation Needed"
-    This page needs significant content. The source README currently contains only {content_length} characters.
-    See the documentation needs report for details on what content is required."""
     
     def _fix_image_paths(self, content: str, source_path: Path, target_path: Path, dry_run: bool = False) -> str:
         """Fix relative image paths to work from the target location"""
@@ -414,23 +374,6 @@ Total files with minimal content: {len(self.stats['needs_content'])}
             content += f"| `{item['source']}` | `{item['target']}` | {item['length']} chars | {status} |\n"
         
         content += """
-
-## Action Items
-
-1. Review each file listed above
-2. Add comprehensive documentation including:
-   - Overview/Introduction
-   - Prerequisites/Requirements
-   - Installation/Setup instructions
-   - Usage examples
-   - API reference (if applicable)
-   - Troubleshooting guide
-   - Links to related documentation
-
-## Priority Guidelines
-
-- **❌ Critical** (< {self.critical_threshold} chars): These files are essentially empty and need immediate attention
-- **⚠️ Needs Expansion** (< {self.min_content_length} chars): These files have some content but need significant expansion
 """
         
         # Write report

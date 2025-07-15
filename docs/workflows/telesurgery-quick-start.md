@@ -1,81 +1,305 @@
----
-title: Quick Start Guide
-source: i4h-workflows/workflows/telesurgery/README.md
----
-
-# Quick Start Guide
-
-!!! info "Source"
-    This content is synchronized from [`i4h-workflows/workflows/telesurgery/README.md`](https://github.com/isaac-for-healthcare/i4h-workflows/blob/main/workflows/telesurgery/README.md)
-    
-    To make changes, please edit the source file and run the synchronization script.
-
-# Telesurgery Workflow
+# 🌐 Telesurgery Workflow
 
 ![Telesurgery Workflow](../../assets/images/telesurgery_workflow.jpg)
 
-## Table of Contents
-- [System Requirements](#system-requirements)
-- [Quick Start](#quick-start)
-- [Running the Workflow](#running-the-workflow)
-- [Licensing](#licensing)
+---
 
-## System Requirements
+## 🔬 Technical Overview
 
-### Hardware Requirements
-- Ubuntu 22.04
-- NVIDIA GPU with compute capability 8.6 and 32GB of memory
+The Telesurgery Workflow is a cutting-edge solution designed for healthcare professionals and researchers working in the field of remote surgical procedures. This workflow provides a comprehensive framework for enabling and analyzing remote surgical operations, leveraging NVIDIA's advanced GPU capabilities to ensure real-time, high-fidelity surgical interactions across distances. It enables surgeons to perform complex procedures remotely, researchers to develop new telemedicine techniques, and medical institutions to expand their reach to underserved areas. By offering a robust platform for remote surgical operations, this workflow helps improve healthcare accessibility, reduce geographical barriers to specialized care, and advance the field of telemedicine.
+
+### Demos
+
+The following GIFs demonstrate the real-world telesurgery workflow performing benchtop tasks:
+<p align="middle">
+  <img src="../../assets/images/remote.gif" width="300" />
+  <img src="../../assets/images/suturing.gif" width="300" />
+  <img src="../../assets/images/cutting.gif" width="300" />
+</p>
+
+- Left: Teleoperation of the MIRA robot using the Haply Inverse3 across San Francisco (surgeon) and Santa Clara (robot)
+- Center: Suturing task in progress
+- Right: Cutting task using a scissor tool
+
+### System Architecture
+
+The telesurgery workflow presented here can be conceptually summarized by the following diagram.
+
+![Telesurgery Diagram](../../assets/images/overview.jpg)
+
+- <b>Surgeon Side</b>: Includes the controller and display connected to the workstation.
+- <b>Patient Side</b>: Includes the surgical robot and camera. In real-world workflows, both are physical devices. In simulation, they are virtual.
+
+The surgeon uses the controller to operate the robot remotely. The robot’s actions and environment are captured by a camera and streamed back via DDS to the surgeon’s display in real-time.
+
+### Controllers
+
+Two types of controllers are supported:
+
+- A Microsoft Xbox or compatible controller
+- A Haply Inverse3 device for advanced, intuitive control of the robot (not yet fully supported in simulation)
+
+> [!Note]
+> In simulation mode, use the Xbox controller. Haply Inverse3 support is still under development.
+
+### Robots
+
+This workflow supports the [MIRA robot](https://virtualincision.com/mira/) from Virtual Incision in simulation and in the physical world.
+
+### Cameras
+
+#### Simulation
+For the simulation workflow, there is a virtual camera that is located on the MIRA robot between the left and right arms.
+
+![Camera](../../assets/images/camera.jpg)
+
+
+#### Real World
+In the real world workflow, two camera types are currently supported
+
+- Intel RealSense camera (can stream depth instead if supported by camera)
+- cv2-compatible camera such as USB webcams
+
+Future support: NVIDIA Holoscan Sensor Bridge (HSB) for low-latency video streaming.
+
+### Displays
+
+Any display can be used, but for minimal latency, a G-Sync enabled monitor with high refresh rate (e.g., 240Hz) is recommended.
+
+### Machines
+
+The surgeon and patient workstations can be x86_64 Ubuntu systems or IGX devkits. While they may run on the same machine, they are typically separate systems and can be located far apart.
+
+> [!Note]
+> Isaac Sim does not support arm64. The patient system must be x86_64 when running simulation workflows.
+
+### Communication
+
+Below describes the communication systems used between the surgeon and patient machines.
+
+- <b>Control</b>: WebSockets transmit commands from surgeon to robot
+- <b>Video</b>: DDS streams camera output from patient to surgeon
+
+Prior to running, configure the `SURGEON_IP` and `PATIENT_IP` as shown [here](#2-environment-configuration).
+The video is encoded (default: NVIDIA Video Codec), and parameters like bitrate and codec are [configurable](#advanced-nvidia-video-codec-configuration).
+
+---
+
+## 📋 Table of Contents
+
+- [Telesurgery Workflow](#-telesurgery-workflow)
+  - [🔍 Prerequisites](#-prerequisites)
+    - [System Requirements](#system-requirements)
+    - [Common Setup](#common-setup)
+  - [⚡ Running Workflows](#-running-workflows)
+    - [Real World Environment](#real-world-environment)
+    - [Simulation Environment](#simulation-environment)
+  - [🔧 Advanced Configuration](#-advanced-configuration)
+    - [NTP Server Setup](#ntp-server-setup)
+    - [NVIDIA Video Codec Configuration](#advanced-nvidia-video-codec-configuration)
+  - [🛠️ Troubleshooting](#-troubleshooting)
+    - [Common Issues](#common-issues)
+  - [📄 Licensing](#-licensing)
+
+---
+
+## 🔍 Prerequisites
+
+### System Requirements
+
+#### Hardware Requirements
+- Ubuntu >= 22.04
+- NVIDIA GPU with compute capability 8.6 and 24GB of memory ([see NVIDIA's compute capability guide](https://developer.nvidia.com/cuda-gpus#compute))
    - GPUs without RT Cores, such as A100 and H100, are not supported
 - 50GB of disk space
+- **XBOX Controller** or **Haply Inverse 3**
+- **MIRA** robot (if running the physical workflow)
 
-### Software Requirements
-- NVIDIA Driver Version >= 555
-- CUDA Version >= 12.6
+#### Software Requirements
+
+Most of the software requirements below are met by following the [workflow instructions](#-running-workflows).
+For the Docker version and NVIDIA driver version, follow the links below to upgrade.  For upgrading the NVIDIA driver version on an IGX, follow the instructions
+ [here](#update-cuda-driver-on-igx).
+
+- [NVIDIA Driver Version >= 570](https://developer.nvidia.com/cuda-downloads)
+- [CUDA Version >= 12.8](https://developer.nvidia.com/cuda-downloads)
 - Python 3.10
-- RTI DDS License
+- [Docker](https://docs.docker.com/engine/install/) 28.0.4+
+- [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) 1.17.5+
 
-## Quick Start
+#### Communication Middleware
+- **RTI Connext Data Distribution Service (DDS)**: Professional or evaluation license ([obtain here](https://www.rti.com/free-trial))
 
-### x86 & AARCH64 (IGX) Setup
+### Common Setup
 
-1. **Set up a Docker environment with CUDA enabled (IGX only):**
-   ```bash
-   cd <path-to-i4h-workflows>
-   xhost +
-   workflows/telesurgery/docker/setup.sh run
+#### 1️⃣ RTI DDS License Setup
+```bash
+export RTI_LICENSE_FILE=<full-path-to-rti-license-file>
+# for example
+export RTI_LICENSE_FILE=/home/username/rti/rti_license.dat
+```
 
-   # Inside Docker
-   workflows/telesurgery/docker/setup.sh init
-   ```
+> [!Note]
+> RTI DDS is the common communication package for all scripts. Please refer to [DDS website](https://www.rti.com/products) for registration. You will need to obtain a license file and set the `RTI_LICENSE_FILE` environment variable to its path.
 
-2. **Set up the x86 environment with CUDA enabled:**
-   ```bash
-   cd <path-to-i4h-workflows>
-   xhost +
-   workflows/telesurgery/docker/setup.sh init
-   ```
+#### 2️⃣ Environment Configuration
+When running the Patient and the Surgeon applications on separate systems, export the following environment variables:
 
-3. **Create and activate a [conda](https://www.anaconda.com/docs/getting-started/miniconda/install#quickstart-install-instructions) environment:**
-   ```bash
-   source ~/miniconda3/bin/activate
-   conda create -n telesurgery python=3.10 -y
-   conda activate telesurgery
-   ```
+```bash
+# Set IP addresses of patient and surgeon machines
+export PATIENT_IP="<IP Address of the system running the Patient application>"
+export SURGEON_IP="<IP Address of the system running the Surgeon application>"
 
-4. **Run the setup script:**
-   ```bash
-   cd <path-to-i4h-workflows>
-   bash tools/env_setup_telesurgery.sh
-   ```
+# Export the following for NTP Server (Optional)
+export NTP_SERVER_HOST="<IP Address of the NTP Server>"
+export NTP_SERVER_PORT="123"
+```
 
-> Make sure your public key is added to the github account if the git authentication fails.
+> [!Note]
+> For NTP settings and variables, refer to the [NTP (Network Time Protocol) Server](#ntp-server-setup) section for additional details.
 
-### Obtain RTI DDS License
+---
 
-RTI DDS is the communication package used by all scripts. Please refer to the [DDS website](https://www.rti.com/products) for registration. You will need to obtain a license file and set the `RTI_LICENSE_FILE` environment variable to its path.
+## ⚡ Running Workflows
 
-### NTP Server (Optional)
+### Real World Environment
 
+The real world workflow requires a MIRA robot from Virtual Incision.  Once the MIRA robot is up and running, there is an API
+daemon service that will listen in the background for commands sent from the surgeon controller application.  The robot is not
+necessary if you only want to test the video streaming functionality.
+
+For the camera(s) on the patient side, you can plug a Realsense camera or a USB webcam to the patient's workstation
+and place it in the desired location.  The MIRA robot also comes with a camera, and you can interface with it by using an HDMI capture
+card, or HDMI to USB-C capture card.
+
+#### 1️⃣ Build Environment
+```bash
+git clone https://github.com/isaac-for-healthcare/i4h-workflows.git
+cd i4h-workflows
+workflows/telesurgery/docker/real.sh build
+```
+
+#### 2️⃣ Running Applications
+
+##### Patient Application
+```bash
+# Start the Docker Container
+workflows/telesurgery/docker/real.sh run
+
+# Getting video from the camera
+python patient/physical/camera.py --camera [realsense|cv2] --name robot --width 1280 --height 720
+```
+
+##### Surgeon Application
+
+There are two applications to start on the surgeon side
+- <b>Viewer</b>: `surgeon/viewer.py` starts the application to receive video stream from the robot's camera
+- <b>Controller</b>: `surgeon/gamepad.py` or `surgeon/haply.py` starts the application to allow the surgeon to control the robot
+
+Each application is started independently, and allows multiple surgeons/users to connect to the robot's camera
+while one surgeon may have control of the robot.
+
+Run the following to receive video stream from the robot camera:
+```bash
+# Start the Docker Container
+workflows/telesurgery/docker/real.sh run
+
+# Start the Surgeon Viewer Application
+python surgeon/viewer.py --name robot --width 1280 --height 720 2> /dev/null
+```
+
+Run the following to control the robot using a game controller:
+```bash
+# Start the Docker Container
+workflows/telesurgery/docker/real.sh run
+
+# Run the Gamepad Controller Application
+python surgeon/gamepad.py --api_host ${PATIENT_IP} --api_port 8081
+```
+
+Or run the following to control the robot using Haply Inverse3:
+```bash
+# Start the Docker Container
+workflows/telesurgery/docker/real.sh run
+
+# Run the Gamepad Controller Application
+python surgeon/haply.py --api_host ${PATIENT_IP} --api_port 8081
+```
+
+### Simulation Environment
+
+The simulation workflow runs Isaac Sim on the patient side to simulate and control the robot in a physics-based environment, enabling development, testing, and validation of robot behaviors in realistic scenarios.  In the scene, there is a MIRA robot with a camera located between its left and right arms (see [image](#simulation)).  The video that is streamed over to the surgeon application comes from this camera i.e., the surgeon will only see what is visible from this camera's perspective.
+
+> [!Note]
+> Allow the patient application to fully initialize before starting the surgeon’s viewer to avoid delays, otherwise the viewer application may appear to hang while waiting for a video stream.
+
+#### 1️⃣ Build Environment
+```bash
+git clone https://github.com/isaac-for-healthcare/i4h-workflows.git
+cd i4h-workflows
+workflows/telesurgery/docker/sim.sh build
+```
+
+#### 2️⃣ Running Applications
+
+##### Patient Application
+```bash
+# Start the Docker Container
+workflows/telesurgery/docker/sim.sh run
+
+# Start the Patient Application
+python patient/simulation/main.py
+```
+
+**Expected Behavior:**
+- The initial view displayed in Isaac Sim is a suture needle on top of a white, reflective surface.
+- To understand the elements in the scene (e.g. the MIRA robot), you can customize the viewport `Camera` to `Perspective` or `Top` view.
+
+![Telesurgery Viewport](../../assets/images/telesurgery_viewport.gif)
+
+> [!Note]
+> While Isaac Sim is loading, you may see the message "Isaac Sim is not responding". It can take approximately several minutes to download the assets and models from the internet and load them to the scene. If this is the first time you run the workflow, it can take up to 10 minutes.
+
+##### Surgeon Application
+
+There are two applications to start on the surgeon side
+- <b>Viewer</b>: `surgeon/viewer.py` starts the application to receive video stream from the robot's camera
+- <b>Controller</b>: `surgeon/gamepad.py` starts the application to allow the surgeon to control the robot
+
+Each application is started independently, and allows multiple surgeons/users to connect to the robot's camera
+while one surgeon may have control of the robot.
+
+Run the following to receive video stream from the robot camera:
+```bash
+# Start the Docker Container
+workflows/telesurgery/docker/sim.sh run
+
+# Start the Surgeon Viewer Application
+python surgeon/viewer.py --name robot --width 1280 --height 720 2> /dev/null
+```
+
+**Expected Behavior:**
+- The surgeon sees only what is visible from the camera located on the MIRA robot and does not have access to other views
+- In the initial scene, a suture needle on a white, reflective surface will be visible from the robot camera as shown below
+
+![Surgeon View](../../assets/images/surgeon_video.jpg)
+
+Run the following to control the robot:
+```bash
+# Start the Docker Container
+workflows/telesurgery/docker/sim.sh run
+
+# Run the Gamepad Controller Application
+python surgeon/gamepad.py --api_host ${PATIENT_IP} --api_port 8081
+```
+
+See [keybindings](./docs/gamepad.md) for how to use the game controller.
+
+---
+
+## 🔧 Advanced Configuration
+
+### NTP Server Setup
 An NTP (Network Time Protocol) server provides accurate time information to clients over a computer network. NTP is designed to synchronize the clocks of computers to a reference time source, ensuring all devices on the network maintain the same time.
 
 ```bash
@@ -89,85 +313,18 @@ docker logs ntp-server
 export NTP_SERVER_HOST=<NTP server address>
 
 # To stop the server
-# docker stop ntp-server && docker rm ntp-server
+docker stop ntp-server && docker rm ntp-server
 ```
 
-### Environment Variables
+### Advanced NVIDIA Video Codec Configuration
 
-Before running any scripts, set up the following environment variables:
-
-1. **PYTHONPATH**: Set this to point to the **scripts** directory:
-   ```bash
-   export PYTHONPATH=<path-to-i4h-workflows>/workflows/telesurgery/scripts
-   ```
-   This ensures Python can find the modules under the [`scripts`](./scripts) directory.
-
-2. **RTI_LICENSE_FILE**: Set this to point to your RTI DDS license file:
-   ```bash
-   export RTI_LICENSE_FILE=<path-to-rti-license-file>
-   ```
-   This is required for the DDS communication package to function properly.
-
-3. **NDDS_DISCOVERY_PEERS**: Set this to the IP address receiving camera data:
-   ```bash
-   export NDDS_DISCOVERY_PEERS="surgeon IP address"
-   ```
-More recommended variables can be found in [env.sh](./scripts/env.sh).
-
-## Running the Workflow
-
-```bash
-cd <path-to-i4h-workflows>/workflows/telesurgery/scripts
-source env.sh  # Make sure all env variables are correctly set in env.sh
-
-export PATIENT_IP=<patient IP address>
-export SURGEON_IP=<surgeon IP address>
-```
-> Make sure the MIRA API Server is up and running (port: 8081) in the case of a physical world setup.
-
-### [Option 1] Patient in Physical World _(x86 / aarch64)_
-
-When running on IGX (aarch64), ensure you are in the Docker environment set up previously.
-
-```bash
-# Stream camera output
-python patient/physical/camera.py --camera realsense --name room --width 1280 --height 720
-python patient/physical/camera.py --camera cv2 --name robot --width 1920 --height 1080
-```
-
-### [Option 2] Patient in Simulation World _(x86)_
-
-```bash
-# Download the assets
-i4h-asset-retrieve
-
-python patient/simulation/main.py [--encoder nvc]
-```
-
-### Surgeon Connecting to Patient _(x86 / aarch64)_
-
-```bash
-# capture robot camera stream
-NDDS_DISCOVERY_PEERS=${PATIENT_IP} python surgeon/camera.py --name robot --width 1280 --height 720 [--decoder nvc]
-
-# capture room camera stream (optional)
-NDDS_DISCOVERY_PEERS=${PATIENT_IP} python surgeon/camera.py --name room --width 1280 --height 720 [--decoder nvc]
-
-# Connect to gamepad controller and send commands to API Server
-python surgeon/gamepad.py --api_host ${PATIENT_IP} --api_port 8081
-```
-
-### Using H.264/HEVC Encoder/Decoder from NVIDIA Video Codec
-
-Camera data can be streamed using either the H.264 or HEVC (H.265) codecs. To enable this for the Patient and Surgeon applications, use the `--encoder nvc` or `--decoder nvc` argument, respectively.
-
-Encoding parameters can be customized in the Patient application using the `--encoder_params` argument, as shown below:
+The applications streams H.264 by default using NVIDIA Video Codec. Additional encoding parameters can be customized in the Patient application using the `--encoder_params` argument:
 
 ```bash
 python patient/simulation/main.py --encoder nvc --encoder_params patient/nvc_encoder_params.json
 ```
 
-#### Sample Encoding Parameters for the NVIDIA Video Codec
+#### Sample Encoding Parameters
 
 Here's an example of encoding parameters in JSON format:
 
@@ -182,17 +339,75 @@ Here's an example of encoding parameters in JSON format:
 }
 ```
 
-> [!NOTE]
-> H.264 or HEVC (H.265) codecs are available on x86 platform only.
+### Advanced NVJPEG Configuration
 
-### Important Notes
-1. You may need to run multiple scripts simultaneously in different terminals or run in background (in case of docker)
-2. A typical setup requires multiple terminals running:
-   - Patient: Camera1, Camera2, Controller, etc.
-   - Surgeon: Camera1, Camera2, Controller, etc.
+Adjust the quality of encoded frames using the NVJPEG encoder by editing the [nvjpeg_encoder_params.json](./scripts/patient/nvjpeg_encoder_params.json) file. Simply change the quality parameter to a value between 1 and 100:
 
-If you encounter issues not covered in the notes above, please check the documentation for each component or open a new issue on GitHub.
+```json
+{
+    "quality": 90
+}
+```
 
-## Licensing
+---
+
+## 🛠️ Troubleshooting
+
+### Common Issues
+
+#### Docker Build Error "empty ssh agent socket"
+Q: I get the following error when building the Docker image:
+```bash
+ERROR: invalid empty ssh agent socket: make sure SSH_AUTH_SOCK is set
+```
+
+A: Start the ssh-agent
+```bash
+eval "$(ssh-agent -s)" && ssh-add
+```
+
+#### Docker Build Error "Permission denied (publickey)"
+Q: I get the following error when building the Docker image when cloning i4h-asset-catalog
+```
+ => ERROR [stage-0  7/12] RUN --mount=type=ssh     /workspace/isaaclab/_isaac_sim/python.sh -m pip install --no-deps         git+ssh://git@github.com/isaac-for-healthcare/i4h-asset-ca  1.6s
+0.793 Collecting git+ssh://****@github.com/isaac-for-healthcare/i4h-asset-catalog.git@main
+0.793   Cloning ssh://****@github.com/isaac-for-healthcare/i4h-asset-catalog.git (to revision main) to ./pip-req-build-_jfynqqa
+0.801   Running command git clone --filter=blob:none --quiet 'ssh://****@github.com/isaac-for-healthcare/i4h-asset-catalog.git' /tmp/pip-req-build-_jfynqqa
+1.334   git@github.com: Permission denied (publickey).
+1.335   fatal: Could not read from remote repository.
+```
+
+A: Make sure you've added your ssh key using ssh-add. If the error persist, try adding a new ssh key to your GitHub account and ensure
+single sign on is configured for isaac-for-healthcare.
+
+#### Unable to launch the applications when using NVIDIA Video Codec
+
+Q: I'm getting an error when I start the application with the NVIDIA Video Codec.
+
+```BASH
+[error] [nv_video_encoder.cpp:101] Failed to create encoder: LoadNvEncApi : Current Driver Version does not support this NvEncodeAPI version, please upgrade driver at /workspace/holohub/build/nvidia_video_codec/_deps/nvc_sdk/NvEncoder/NvEncoder.cpp:82
+```
+
+**A:** NVIDIA Video Codec requires CUDA version 12 (driver version 570.0) or later. Check out the [NVIDIA Video Codec System Requirements](https://developer.nvidia.com/nvidia-video-codec-sdk/download) section for more details. **
+
+
+#### Update CUDA Driver on IGX
+```bash
+# ssh to igx-host to run the following commands
+sudo systemctl isolate multi-user
+
+sudo apt purge "nvidia-kernel-*"
+sudo add-apt-repository ppa:graphics-drivers/ppa
+sudo apt update
+
+sudo apt-get -y install linux-headers-nvidia-tegra aptitude
+sudo aptitude install nvidia-driver-570-open # Resolve any conflicts
+
+# hard reboot igx (soft reboot may not work)
+```
+
+---
+
+## 📄 Licensing
 
 By using the Telesurgery workflow and NVIDIA Video Codec, you are implicitly agreeing to the [NVIDIA Software License Agreement](https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-software-license-agreement/) and [NVIDIA Software Developer License Agreement](https://developer.download.nvidia.com/designworks/DesignWorks_SDKs_Samples_Tools_License_distrib_use_rights_2017_06_13.pdf?t=eyJscyI6InJlZiIsImxzZCI6IlJFRi1zZWFyY2guYnJhdmUuY29tLyJ9). If you do not agree to the EULA, do not run this container.

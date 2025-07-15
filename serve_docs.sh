@@ -51,10 +51,10 @@ if ! command -v mkdocs &> /dev/null; then
     exit 1
 fi
 
-# Check if new directory structure exists
-if [ ! -d "docs/getting-started" ] || [ ! -d "docs/tasks" ] || [ ! -d "docs/workflows" ]; then
+# Check if documentation directory exists
+if [ ! -d "docs/workflows" ]; then
     echo "Warning: Documentation structure appears incomplete."
-    echo "Expected directories: docs/getting-started/, docs/tasks/, docs/workflows/"
+    echo "Expected directory: docs/workflows/"
 fi
 
 # Build the documentation first to catch any errors

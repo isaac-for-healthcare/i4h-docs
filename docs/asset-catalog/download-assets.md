@@ -67,7 +67,3 @@ from i4h_asset_helper import get_asset_local_path
 print(get_asset_local_path())
 ```
 
-## See Also
-
-- [Available Assets](../../getting-started/asset-catalog/available-assets.md) - Browse the complete catalog
-- [Asset API](./api.md) - Detailed API documentation

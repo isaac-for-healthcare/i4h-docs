@@ -1,62 +1,65 @@
-# Asset Catalog
+# Isaac for Healthcare - Asset Catalog
 
-Sim-ready medical assets for rapid prototyping and development. The Asset Catalog provides pre-validated 3D models, anatomical structures, and synthetic data generation pipelines for healthcare robotics applications.
-
-## What is the Asset Catalog?
-
-The Asset Catalog is a comprehensive library of medical and surgical assets optimized for simulation and AI training. Each asset is:
-
-- :material-ruler: **Physically Accurate**: Validated material properties and dynamics
-- :material-speedometer: **Sim-Ready**: Optimized for real-time simulation performance
-- :material-tag-multiple: **Versioned**: Consistent quality with semantic versioning
-- :material-puzzle: **Modular**: Mix and match components for custom scenarios
-- :material-check-decagram: **Production-Tested**: Used in real healthcare robotics deployments
-
----
+The Isaac for Healthcare (i4h) asset catalog is a collection of assets that are used to create the i4h simulation environment.
 
 ## Asset Categories
 
-Browse our comprehensive collection of medical simulation assets. Click on any category below to view the complete list of available models and paths.
+The i4h asset catalog contains several categories of assets that are essential for creating realistic healthcare simulations:
 
-<div class="grid cards" markdown>
+### Pre-trained Models
+- **Medical Imaging Models**: Deep learning models trained for medical image analysis, segmentation, and diagnosis
+- **Surgical Planning Models**: AI models for surgical procedure planning and optimization
+- **Patient-specific Models**: Models trained on patient data for personalized healthcare applications
 
--   ### :material-brain: **Policies**
-    
-    Pre-trained AI models for medical robotics tasks
-    
-    **Available Models:**
+### Simulation-Ready Robots
+- **Surgical Robots**: Detailed 3D models of surgical robotic systems with accurate kinematics and dynamics
+- **Medical Assist Robots**: Models of robots used for patient assistance and care
+- **Lab Automation Robots**: Models of robots used in laboratory settings
 
-    - Ultrasound liver scanning
-    - GR00T-N1 policies
-    - PI-Zero policies
-    - Cosmos-trained variants
-    
-    [Browse Policies →](available-assets.md#policies)
+### Anatomical Models
+- **Standard Anatomy**: High-fidelity 3D models of human anatomy for general simulation
+- **Pathological Models**: Models representing various disease states and conditions
+- **BYO (Bring Your Own) Anatomy**: Support for importing custom anatomical models with proper documentation and validation guidelines
 
--   ### :material-cube-outline: **Props**
-    
-    Medical equipment, anatomical models, and training fixtures
-    
-    **Subcategories:**
+### Visual Assets
+- **Medical Equipment**: 3D models of medical devices and equipment
+- **Hospital Environment**: Models of hospital rooms, operating theaters, and medical facilities
+- **Materials and Textures**: High-quality textures and materials for realistic rendering
 
-    - :material-stethoscope: **Medical Equipment** - Ultrasound probes, depth cameras, mounting fixtures
-    - :material-human: **Anatomical Models** - Abdominal phantom, organs, vessels, tumors
-    - :material-school: **Surgical Training Props** - Peg boards, suture pads, needles, training blocks
-    - :material-table-furniture: **Tables & Fixtures** - Operating tables, Vention tables, camera mounts
-    
-    [View Props →](available-assets.md#props)
+### Configuration Files
+- **Simulation Parameters**: Configuration files for physics, rendering, and simulation settings
+- **Workflow Templates**: Pre-configured workflow templates for common medical procedures
+- **Environment Setups**: Configuration files for different simulation environments
 
--   ### :material-robot-industrial: **Robots**
-    
-    Pre-configured medical robot models with accurate kinematics
-    
-    **Available Robots:**
-    
-    - **da Vinci** - ECM and PSM modules
-    - **Franka** - Panda and FR3 assemblies
-    - **MIRA** - Virtual Incision bipolar robot
-    - **STAR** - Smart Tissue Autonomous Robot
-    
-    [View Robots →](available-assets.md#robots)
+## Asset Documentation
+Each asset category includes detailed documentation, usage guidelines, and compatibility information to ensure proper integration into the i4h simulation environment.
 
-</div>
+## Version Information
+The asset catalog follows the Isaac Lab asset structure. You can find the asset for each version in the corresponding folders.
+
+### Version 0.2.0
+Contains all assets from Version 0.1.0 plus:
+- Pre-trained models for liver scanning:
+  - GR00TN1
+  - GR00TN1_Cosmos
+  - Pi0 model with Cosmos
+- Mira Surgical Robot
+
+Catalog: [v0.2.0](./docs/catalog_v0.2.0.md)
+
+### Version 0.1.0
+Contains the initial release of the asset catalog with:
+- Basic anatomical models
+- Standard medical equipment
+- Hospital environment assets
+- Franka Robot Assets
+- Pi0 models including:
+  - Liver scan policies and configurations
+  - Model weights and training states
+  - Normalization statistics
+  - Parameter manifests and metadata
+
+Catalog: [v0.1.0](./docs/catalog_v0.1.0.md)
+
+## Asset Helper Tool
+You can also use the `i4h_asset_helper` package to get the download links for the assets. For more details, please refer to [I4H Assets Catalog Helper](./docs/catalog_helper.md).

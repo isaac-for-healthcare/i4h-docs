@@ -1,436 +1,202 @@
----
-title: Ultrasound Raytracing Simulator
-source: i4h-sensor-simulation/ultrasound-raytracing/README.md
----
+# Raytracing Ultrasound Simulator
 
-!!! info "Source"
-    This content is synchronized from [`i4h-sensor-simulation/ultrasound-raytracing/README.md`](https://github.com/isaac-for-healthcare/i4h-sensor-simulation/blob/main/ultrasound-raytracing/README.md)
-    
-    To make changes, please edit the source file and run the synchronization script.
+A high-performance GPU-accelerated ultrasound simulator using NVIDIA OptiX raytracing with Python bindings.
 
-# Ultrasound Raytracing Simulator
+## Features
 
-## Overview
+- GPU acceleration with CUDA and NVIDIA OptiX
+- Python interface for ease of use
+- Real-time simulation capabilities
+- Support for curvilinear, linear, and phased array ultrasound probe simulation
 
-A high-performance GPU-accelerated ultrasound simulator using NVIDIA OptiX raytracing technology. This library provides physically accurate ultrasound simulation with real-time performance, enabling applications in robotic guidance, AI training, and medical education.
+## Benchmark Results
+To reproduce these results, run `python examples/benchmark.py`.
+```
+Benchmark Results:
+        Total frames: 200
+        Average frame time: 0.0073 seconds
+        Average FPS: 136.28
+        Minimum FPS: 59.66
+        Maximum FPS: 249.62
+        Date: 2025-03-16 07:38:46
 
-## Getting Started
+        System Information:
+        GPU: NVIDIA RTX 6000 Ada Generation (48.0 GB, Driver: 565.57.01)
+        CPU: AMD Ryzen Threadripper PRO 7975WX 32-Cores (64 cores)
 
-### Prerequisites
+```
+## Requirements
 
-- **GPU**: NVIDIA GPU with Compute Capability 7.0+ (RTX 2000 series or newer)
-- **CUDA**: Version 12.6 or higher
-- **Driver**: NVIDIA Driver 555 or higher
-- **OS**: Ubuntu 20.04 or 22.04
-- **Build Tools**: CMake 3.24+, GCC 9+
-- **Python**: 3.10+
+- [CUDA 12.6+](https://docs.nvidia.com/cuda/cuda-quick-start-guide/index.html#)
+- [NVIDIA Driver 555+](https://www.nvidia.com/en-us/drivers/)
+- [CMake 3.24+](https://cmake.org/)
+- [NVIDIA OptiX SDK 8.1](https://developer.nvidia.com/designworks/optix/downloads/legacy)
 
-### Installation
+## Installation
 
-1. **Clone the repository**
+1. Clone this repository:
    ```bash
    git clone https://github.com/isaac-for-healthcare/i4h-sensor-simulation.git
    cd i4h-sensor-simulation/ultrasound-raytracing
    ```
 
-2. **Set up OptiX SDK**
-   
-   Download OptiX SDK 8.1 from [NVIDIA Developer](https://developer.nvidia.com/designworks/optix/downloads/legacy):
-   
-   ```bash
-   # Make the downloaded script executable
-   chmod +x NVIDIA-OptiX-SDK-8.1.0-linux64-x86_64-*.sh
-   
-   # Extract the SDK
-   ./NVIDIA-OptiX-SDK-8.1.0-linux64-x86_64-*.sh
-   
-   # Move to the correct location
-   mv NVIDIA-OptiX-SDK-8.1.0-linux64-x86_64 third_party/optix/
-   ```
+2. Download and set up OptiX SDK 8.1:
+   - Download OptiX SDK 8.1 from the [NVIDIA Developer website](https://developer.nvidia.com/designworks/optix/downloads/legacy)
+   - Extract the downloaded OptiX SDK archive
+   - Place the extracted directory inside the `ultrasound-raytracing/third_party/optix` directory, maintaining the following structure:
+     ```
+     ultrasound-raytracing/third_party/
+     └── optix
+         └── NVIDIA-OptiX-SDK-8.1.0-<platform>  # Name may vary based on the platform
+             ├── include
+             │   └── internal
+             └── SDK
+                 ├── cuda
+                 └── sutil
+     ```
 
-3. **Download anatomical models**
-   
+   Please note that the downloaded file is a shell script, you need to make it executable and run it before moving it to the `ultrasound-raytracing/third_party/optix` directory:
+
+     ```bash
+     chmod +x <path_to_downloaded_file>/NVIDIA-OptiX-SDK-8.1.0-linux64-x86_64-35015278.sh
+     ./<path_to_downloaded_file>/NVIDIA-OptiX-SDK-8.1.0-linux64-x86_64-35015278.sh
+     ```
+
+3. Download mesh data:
+   - The mesh data is a part of the Isaac for Healthcare asset package. You can download it by installing the asset helper tool:
    ```bash
-   # Install asset helper
    pip install git+ssh://git@github.com/isaac-for-healthcare/i4h-asset-catalog.git
-   
-   # Download and extract assets
-   i4h-asset-retrieve
-   
-   # Copy organ meshes to project
-   cp -r ~/.cache/i4h-assets/*/Props/ABDPhantom/Organs mesh/
    ```
 
-4. **Install with uv (recommended)**
-   
+   - Then you can download and extract the data to `~/.cache/i4h-assets/`
+   ```bash
+   i4h-asset-retrieve
+   ```
+
+   - The mesh data will be extracted to `~/.cache/i4h-assets/<sha256_hash>/Props/ABDPhantom/Organs`
+   - You can copy the `Organs` folder to the `mesh` directory
+
+   ```bash
+   cp -r ~/.cache/i4h-assets/<sha256_hash>/Props/ABDPhantom/Organs mesh
+   ```
+
+4. Install Python dependencies and create virtual environment:
+
+   **Option A: Using uv**
+   ```bash
+   uv sync && source .venv/bin/activate
+   ```
+
+   **Option B: Using conda**
    ```bash
    # Create environment and install dependencies
-   uv sync
-   source .venv/bin/activate
-   ```
-   
-   Alternative: Install with conda
-   ```bash
    conda create -n ultrasound python=3.10 libstdcxx-ng -c conda-forge -y
+
    conda activate ultrasound
    pip install -e .
    ```
 
-5. **Build the C++ components**
-   
+5. Build the project
+
+> Note: Before building, ensure the cuda compiler `nvcc` is installed.
+>
+>  ```bash
+>  $ which nvcc
+>  ```
+>
+>  If nvcc is not found, ensure cuda-toolkit is installed and can be found in `$PATH` and `$LD_LIBRARY_PATH` e.g.:
+> ```bash
+> export PATH=/usr/local/cuda/bin/:$PATH
+> export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+> ```
+
+   CMake 3.24.0 or higher is required to build the project, you can use `cmake --version` to check your version. If an older version is installed, you need to upgrade it:
+
    ```bash
-   # Configure with CMake
+   pip install cmake==3.24.0
+   hash -r   # Reset terminal path cache
+   ```
+
+   Then you can build the project by:
+
+   ```bash
    cmake -DPYTHON_EXECUTABLE=$(which python) -DCMAKE_BUILD_TYPE=Release -B build-release
-   
-   # Build (use all CPU cores)
    cmake --build build-release -j $(nproc)
    ```
 
-   Note: If you have multiple GPUs with different compute capabilities, specify one:
-   ```bash
-   export CUDA_VISIBLE_DEVICES=0  # Use first GPU only
-   ```
+>   Note:
+>
+>   - In the [CMake setup file](./cmake/SetupCUDA.cmake), the default value for `CMAKE_CUDA_ARCHITECTURES` is set to `native`. This setting **may >cause compilation failures** on systems with multiple NVIDIA GPUs that have different compute capabilities.
+>
+>   - If you experience this issue, try specifying the GPU you want to use by setting the environment variable `export CUDA_VISIBLE_DEVICES=> >.<selected device number>` before building the project.
+>
+6. Run examples
 
-6. **Verify installation**
-   
+   **Using uv**
    ```bash
-   # Run basic example
+   # Basic example
    uv run examples/sphere_sweep.py
-   
-   # Launch interactive web demo
+
+   # Web interface (open http://localhost:8000 afterward)
    uv run examples/server.py
-   # Open http://localhost:8000 in your browser
    ```
 
-## Quick Start Tutorial
+   **Using conda**
+   ```bash
+   # Using the system's libstdc++ with LD_PRELOAD if your conda environment's version is too old
+   python examples/sphere_sweep.py
 
-Create your first ultrasound simulation:
+   # Web interface
+   python examples/server.py
+   ```
+
+   **C++ example**
+   ```bash
+   ./build-release/examples/cpp/ray_sim_example
+   ```
+
+## Basic Usage
 
 ```python
 import raysim.cuda as rs
 import numpy as np
-import matplotlib.pyplot as plt
 
-# 1. Set up the scene
+# Create materials
 materials = rs.Materials()
-world = rs.World("water")  # Background medium
 
-# 2. Add a target object
-sphere = rs.Sphere(
-    center=[0, 0, -145],      # 145mm below probe
-    radius=40,                # 40mm radius
-    material=materials.get_index("fat")
-)
+# Create world and add objects
+world = rs.World("water")
+material_idx = materials.get_index("fat")
+sphere = rs.Sphere([0, 0, -145], 40, material_idx)
 world.add(sphere)
 
-# 3. Configure ultrasound probe
-probe = rs.UltrasoundProbe(
-    rs.Pose(position=[0, 0, 0], rotation=[0, np.pi, 0])
-)
-
-# 4. Set simulation parameters
-sim_params = rs.SimParams()
-sim_params.t_far = 180.0      # Maximum depth in mm
-
-# 5. Run simulation
+# Create simulator
 simulator = rs.RaytracingUltrasoundSimulator(world, materials)
-b_mode_image = simulator.simulate(probe, sim_params)
 
-# 6. Display result
-plt.imshow(b_mode_image, cmap='gray', aspect='auto')
-plt.title('Simulated B-mode Ultrasound')
-plt.xlabel('Lateral Position')
-plt.ylabel('Depth')
-plt.show()
-```
+# Configure probe
+probe = rs.UltrasoundProbe(rs.Pose(position=[0, 0, 0], rotation=[0, np.pi, 0]))
 
-## Understanding the Simulator
-
-### Architecture
-
-The simulator combines several technologies for optimal performance:
-
-1. **OptiX Ray Tracing**: Hardware-accelerated ray-scene intersection
-2. **CUDA Kernels**: Parallel computation of acoustic propagation
-3. **Python Bindings**: High-level interface for ease of use
-4. **C++ Core**: Performance-critical algorithms
-
-### Physics Model
-
-The simulation implements realistic ultrasound physics:
-
-- **Acoustic Impedance**: Material-dependent wave reflection
-- **Attenuation**: Frequency-dependent signal loss
-- **Scattering**: Sub-resolution tissue structure effects
-- **Beamforming**: Delay-and-sum image reconstruction
-
-### Probe Types
-
-Three transducer geometries are supported:
-
-```python
-# Linear array - rectangular field of view
-linear = rs.LinearArrayProbe(
-    num_elements=128,
-    pitch=0.3,  # mm between elements
-    frequency=5e6  # 5 MHz
-)
-
-# Curvilinear - fan-shaped field of view
-curved = rs.CurvilinearProbe(
-    num_elements=128,
-    radius=60,  # mm radius of curvature
-    angular_width=np.pi/3  # 60 degree FOV
-)
-
-# Phased array - sector scan from small aperture
-phased = rs.PhasedArrayProbe(
-    num_elements=64,
-    pitch=0.15,
-    frequency=2.5e6
-)
-```
-
-## How-to Guides
-
-### Load Anatomical Models
-
-```python
-# Load liver mesh from file
-liver = rs.TriangleMesh.from_file(
-    "mesh/Organs/liver.ply",
-    material=materials.get_index("liver")
-)
-world.add(liver)
-
-# Transform mesh position
-liver.set_transform(
-    translation=[10, 0, -100],
-    rotation=[0, np.pi/4, 0],
-    scale=[1.2, 1.2, 1.2]
-)
-```
-
-### Simulate Tissue Layers
-
-```python
-# Create layered phantom
-world = rs.World("water")
-
-# Add skin layer
-skin_box = rs.Box(
-    min_corner=[-50, -50, -5],
-    max_corner=[50, 50, -3],
-    material=materials.get_index("skin")
-)
-world.add(skin_box)
-
-# Add fat layer
-fat_box = rs.Box(
-    min_corner=[-50, -50, -15],
-    max_corner=[50, 50, -5],
-    material=materials.get_index("fat")
-)
-world.add(fat_box)
-
-# Add muscle layer
-muscle_box = rs.Box(
-    min_corner=[-50, -50, -50],
-    max_corner=[50, 50, -15],
-    material=materials.get_index("muscle")
-)
-world.add(muscle_box)
-```
-
-### Enable Advanced Features
-
-```python
-# High-quality simulation settings
+# Set simulation parameters
 sim_params = rs.SimParams()
-sim_params.samples_per_element = 512  # More rays for better quality
-sim_params.enable_multiple_scattering = True
-sim_params.max_bounces = 5
+sim_params.t_far = 180.0
 
-# Performance settings
-sim_params.use_fp16 = True  # Use half precision for speed
-sim_params.tile_size = 16    # GPU optimization parameter
+# Run simulation
+b_mode_image = simulator.simulate(probe, sim_params)
 ```
-
-### Real-time Streaming
-
-```python
-# Set up continuous simulation
-simulator = rs.RealtimeSimulator(world, materials)
-simulator.set_probe(probe)
-
-# Simulation loop
-for frame in range(1000):
-    # Update probe position
-    angle = frame * 0.01
-    probe.set_position([10 * np.sin(angle), 0, 0])
-    
-    # Get image (non-blocking)
-    image = simulator.get_frame()
-    
-    # Process or display image
-    process_image(image)
-```
-
-## Performance Optimization
-
-### Benchmark Results
-
-On NVIDIA RTX 6000 Ada (48GB):
-- **Resolution**: 512x512 pixels
-- **Frame Rate**: 136 FPS average
-- **Latency**: 7.3ms per frame
-
-Run benchmarks on your system:
-```bash
-uv run examples/benchmark.py
-```
-
-### Memory Management
-
-```python
-# Pre-allocate GPU memory
-simulator = rs.RaytracingUltrasoundSimulator(
-    world, 
-    materials,
-    preallocate_mb=4096  # Reserve 4GB
-)
-
-# Reuse simulator for multiple frames
-for i in range(100):
-    world.update_object_positions()  # Only update positions
-    image = simulator.simulate(probe, sim_params)
-```
-
-### Multi-GPU Support
-
-```python
-# Use specific GPU
-import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '0'  # First GPU
-
-# Or distribute across GPUs
-from multiprocessing import Pool
-
-def simulate_on_gpu(gpu_id):
-    os.environ['CUDA_VISIBLE_DEVICES'] = str(gpu_id)
-    # Run simulation...
-    
-with Pool(4) as p:
-    results = p.map(simulate_on_gpu, range(4))
-```
-
-## API Reference
-
-### Core Classes
-
-#### `World`
-Container for scene objects
-- `add(object)`: Add geometric primitive or mesh
-- `remove(object)`: Remove object from scene
-- `clear()`: Remove all objects
-- `set_background_material(name)`: Set ambient medium
-
-#### `Materials`
-Material property database
-- `get_index(name)`: Get material ID by name
-- `add_custom(properties)`: Define new material
-- `list_available()`: Show all materials
-
-#### `UltrasoundProbe`
-Base class for transducers
-- `set_pose(pose)`: Update position/orientation
-- `get_element_positions()`: Get transducer geometry
-- Subclasses: `LinearArrayProbe`, `CurvilinearProbe`, `PhasedArrayProbe`
-
-#### `SimParams`
-Simulation configuration
-- `t_near`, `t_far`: Depth range (mm)
-- `samples_per_element`: Ray density
-- `frequency`: Ultrasound frequency (Hz)
-- `enable_multiple_scattering`: Physics fidelity
-
-#### `RaytracingUltrasoundSimulator`
-Main simulation engine
-- `simulate(probe, params)`: Generate B-mode image
-- `simulate_rf(probe, params)`: Get raw RF data
-- `get_statistics()`: Performance metrics
-
-### Geometric Primitives
-
-- `Sphere(center, radius, material)`
-- `Box(min_corner, max_corner, material)`
-- `Cylinder(center, axis, radius, height, material)`
-- `TriangleMesh.from_file(path, material)`
-
-## Examples
-
-- [Basic Shapes](examples/sphere_sweep.py) - Simple geometric primitives
-- [Liver Scan](examples/liver_sweep.py) - Anatomical model simulation
-- [Web Interface](examples/server.py) - Interactive browser demo
-- [Benchmark](examples/benchmark.py) - Performance testing
-- [C++ Example](examples/cpp/main.cpp) - Direct C++ API usage
 
 ## Development
 
-### Setting Up Development Environment
+For development, VSCode with the dev container is recommended:
+1. Open project in VSCode with Dev Containers extension
+2. Use command palette (`Ctrl+Shift+P`) to run `CMake: Configure`
+3. Build with `F7` or `Ctrl+Shift+B`
 
-For VSCode users:
+### Pre-commit Hooks
+
 ```bash
-# Install development dependencies
-uv pip install -e ".[dev]"
+# For uv users
+uv pip install -e ".[dev]" && pre-commit install
 
-# Set up pre-commit hooks
-pre-commit install
-
-# Run tests
-pytest tests/
+# For conda users
+pip install -e ".[dev]" && pre-commit install
 ```
-
-### Building from Source
-
-Debug build with symbols:
-```bash
-cmake -DCMAKE_BUILD_TYPE=Debug -B build-debug
-cmake --build build-debug
-```
-
-### Contributing
-
-See [CONTRIBUTING.md](../../CONTRIBUTING.md) for:
-- Code style guidelines
-- Testing requirements
-- Pull request process
-
-## Troubleshooting
-
-### Common Issues
-
-**CUDA Architecture Mismatch**
-```bash
-# If you see "no kernel image available"
-export CUDA_VISIBLE_DEVICES=0  # Use single GPU
-# Rebuild with specific architecture
-cmake -DCMAKE_CUDA_ARCHITECTURES=86 -B build  # For RTX 3090
-```
-
-**OptiX Not Found**
-```bash
-# Verify OptiX location
-ls third_party/optix/NVIDIA-OptiX-SDK-*/include/optix.h
-# Should show the header file
-```
-
-**Python Import Error**
-```bash
-# Ensure build directory is in Python path
-export PYTHONPATH=$PWD/build-release:$PYTHONPATH
-```
-
-## License
-
-Apache License 2.0 - see [LICENSE](../../LICENSE) for details.

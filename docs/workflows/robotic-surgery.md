@@ -16,8 +16,8 @@ The robotic surgery workflow provides a comprehensive framework for developing a
 :material-eye: **High-fidelity surgical scene rendering**  
 Deformable tissue simulation powered by NVIDIA PhysX with realistic material properties
 
-:material-download: **Pre-trained models**  
-Ready-to-use policies for needle passing, tissue retraction, peg transfer, and basic suturing
+:material-download: **Pre-built environments**  
+State machine implementations and RL environments for fundamental surgical tasks
 
 :material-tools: **Development tools**  
 Performance profiling, trajectory visualization, and debugging utilities
@@ -44,31 +44,31 @@ Compatible with dVRK (da Vinci Research Kit), Virtual Incision MIRA, Universal R
     
     [View Setup Instructions →](robotic-surgery-quick-start.md)
 
--   ### :material-medical-bag: **Surgical Tasks**
+-   ### :material-medical-bag: **State Machine Environments**
     
-    Pre-built surgical tasks ready to simulate and customize
+    Hand-crafted state machines for fundamental surgical subtasks
     
     **Available tasks:**
 
-    - :material-needle: Needle passing and handover
-    - :material-hand-back-right: Tissue manipulation and retraction
-    - :material-shape-circle-plus: Peg transfer and placement
-    - :material-vector-polyline: Suturing demonstrations
+    - :material-robot-industrial: dVRK-PSM and STAR robot reaching
+    - :material-gesture-two-double-tap: Dual-arm bimanual coordination
+    - :material-needle: Suture needle lifting and manipulation
+    - :material-shape-circle-plus: Peg block transfer tasks
     
-    [Explore Tasks →](robotic-surgery-surgical-tasks.md)
+    [Explore State Machines →](robotic-surgery-state-machine.md)
 
--   ### :material-brain: **Train AI Policies**
+-   ### :material-brain: **Reinforcement Learning**
     
-    Use reinforcement learning to train surgical automation
+    Train adaptive AI policies for surgical automation
     
-    **Training options:**
+    **Training capabilities:**
 
-    - :material-function: PPO and SAC algorithms
-    - :material-gpu: Multi-GPU training support
-    - :material-stairs: Curriculum learning
-    - :material-sync: Sim-to-real transfer
+    - :material-function: RSL-RL framework with PPO
+    - :material-memory: Multi-GPU training support
+    - :material-target: dVRK-PSM reaching tasks
+    - :material-needle: Suture needle manipulation
     
-    [Start Training →](../how-to/how-to-surgery-state-machines.md)
+    [Start Training →](robotic-surgery-reinforcement-learning.md)
 
 </div>
 
@@ -78,6 +78,8 @@ Compatible with dVRK (da Vinci Research Kit), Virtual Incision MIRA, Universal R
 
 The robotic surgery workflow integrates seamlessly with custom hardware and patient models:
 
-- :material-human: [**Bring Your Own Patient**](../how-to/how-to-bring-your-own-patient.md) - Convert medical imaging to surgical planning models
-- :material-robot: [**Bring Your Own Robot**](../how-to/how-to-bring-your-own-robot.md) - Add your surgical robot platform
-- :material-virtual-reality: [**Bring Your Own XR**](../how-to/how-to-bring-your-own-xr.md) - Use mixed reality for surgical planning
+- :material-human: [**Bring Your Own Patient**](tutorials/bring-your-own-patient.md) - Convert medical imaging to surgical planning models
+- :material-virtual-reality: [**Bring Your Own XR**](tutorials/bring-your-own-xr.md) - Use mixed reality for surgical planning
+- :material-robot: **Bring Your Own Robot** - Integrate custom platforms
+    - [MIRA Robot Teleoperation](tutorials/mira-teleoperation.md) - Remote operation of MIRA surgical robot
+    - [Replace Franka Hand with Ultrasound](tutorials/franka-ultrasound-probe.md) - Hardware modification guide

@@ -35,28 +35,16 @@ Sensor Simulation provides high-fidelity emulation of medical imaging devices us
 
 -   ### :material-camera: **Camera & Depth Sensors**
     
-    RGB-D simulation with photorealistic rendering
+    Photorealistic RGB and depth sensing powered by Isaac Sim
     
-    **Includes:**
+    **Capabilities:**
 
-    - :material-microscope: Surgical microscope views
-    - :material-video-vintage: Endoscopic cameras
-    - :material-cube-scan: Depth and stereo vision
-    - :material-palette-advanced: Multi-spectral imaging
+    - :material-microscope: Surgical vision systems (endoscopes, microscopes)
+    - :material-cube-scan: Depth sensing for navigation and collision avoidance
+    - :material-camera-control: Multiple camera models and calibration support
+    - :material-layers-triple: Multi-sensor rigs and sensor fusion
     
     [Learn More →](cameras.md)
 
--   ### :material-cog: **Custom Sensors**
-    
-    Framework for implementing your own sensor models
-    
-    **Support for:**
-
-    - :material-function-variant: Custom physics models
-    - :material-creation: Novel imaging modalities
-    - :material-lock: Proprietary sensors
-    - :material-flask-outline: Research prototypes
-    
-    [Learn More →](../how-to/how-to-custom-sensors.md)
 
 </div>

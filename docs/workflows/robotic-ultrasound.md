@@ -14,12 +14,14 @@ The robotic ultrasound workflow enables autonomous and semi-autonomous ultrasoun
 Supports diagnostic imaging, interventional guidance, vascular access, and medical training applications.
 
 ### :material-hammer-wrench: Hardware & Models
+
 - **Robots**: Franka Panda, UR5/UR10, custom URDF support
 - **Ultrasound**: Linear, curvilinear, phased array probes
 - **Sensors**: RealSense cameras, force/torque sensors, haptic devices
 - **Pre-trained**: Liver scanning, vascular access, force control, safety monitoring
 
 ### :material-application-brackets: Development & Applications
+
 - **Tools**: Multi-terminal orchestration, real-time visualization, performance profiling
 - **Clinical**: Diagnostic automation, needle guidance, training simulation, telemedicine
 
@@ -105,7 +107,10 @@ Supports diagnostic imaging, interventional guidance, vascular access, and medic
     - Sim-to-real transfer
     - Custom robot integration
     
-    [Start Training →](robotic-ultrasound-training.md)
+    **Training guides:**
+    
+    - [PI-Zero Training](robotic-ultrasound-train-pi-zero.md)
+    - [GR00T-N1 Training](robotic-ultrasound-train-gr00t.md)
 
 -   ### :material-chart-line: **Visualization Tools**
     
@@ -128,7 +133,9 @@ Supports diagnostic imaging, interventional guidance, vascular access, and medic
 
 The robotic ultrasound workflow integrates seamlessly with custom hardware and patient models:
 
-- :material-human: [**Bring Your Own Patient**](../how-to/how-to-bring-your-own-patient.md) - Convert medical imaging to ultrasound phantoms
-- :material-robot: [**Bring Your Own Robot**](../how-to/how-to-bring-your-own-robot.md) - Add your robot platform with ultrasound probe
-- :material-virtual-reality: [**Bring Your Own XR**](../how-to/how-to-bring-your-own-xr.md) - Teleoperate with mixed reality devices
+- :material-human: [**Bring Your Own Patient**](tutorials/bring-your-own-patient.md) - Convert medical imaging to ultrasound phantoms
+- :material-virtual-reality: [**Bring Your Own XR**](tutorials/bring-your-own-xr.md) - Teleoperate with mixed reality devices
+- :material-robot: **Bring Your Own Robot** - Integrate custom platforms
+    - [MIRA Robot Teleoperation](tutorials/mira-teleoperation.md) - Remote operation of MIRA surgical robot
+    - [Replace Franka Hand with Ultrasound](tutorials/franka-ultrasound-probe.md) - Hardware modification guide
 

@@ -22,6 +22,7 @@ This script validates and adds license headers to Python and shell files in the 
 It automatically excludes directories defined in the readme-sync-config.yml file.
 """
 
+import argparse
 import os
 import sys
 from pathlib import Path
@@ -200,7 +201,7 @@ def find_code_files(exclude_dirs: Set[str]) -> List[Path]:
     return sorted(code_files)
 
 
-def process_file(file_path: Path) -> Dict[str, any]:
+def process_file(file_path: Path, check_only: bool = False) -> Dict[str, any]:
     """Process a single file to check/add license header."""
     result = {
         'file': file_path,
@@ -219,7 +220,7 @@ def process_file(file_path: Path) -> Dict[str, any]:
         result['has_header'] = has_license_header(content, result['file_type'])
         result['needs_header'] = not result['has_header']
         
-        if result['needs_header']:
+        if result['needs_header'] and not check_only:
             # Add license header
             new_content = add_license_header(content, result['file_type'])
             
@@ -237,9 +238,16 @@ def process_file(file_path: Path) -> Dict[str, any]:
 
 def main():
     """Main function."""
+    parser = argparse.ArgumentParser(description='Validate and add license headers to Python and shell files')
+    parser.add_argument('--check', action='store_true',
+                        help='Check mode: fail if any files are missing headers (do not modify files)')
+    args = parser.parse_args()
+    
     # Load exclusions from config
     exclude_dirs = load_config_excludes()
     
+    if args.check:
+        print("Mode: CHECK ONLY (no files will be modified)")
     print(f"Target file types: Python (.py), Shell (.sh)")
     print(f"Excluding directories: {', '.join(sorted(exclude_dirs)) if exclude_dirs else 'none'}")
     print()
@@ -261,7 +269,7 @@ def main():
     files_with_errors = 0
     
     for file_path in code_files:
-        result = process_file(file_path)
+        result = process_file(file_path, check_only=args.check)
         
         if result['error']:
             files_with_errors += 1
@@ -271,7 +279,9 @@ def main():
             print(f"✅ HAS HEADER: {result['file']}")
         elif result['needs_header']:
             files_needing_headers += 1
-            if result['modified']:
+            if args.check:
+                print(f"❌ MISSING HEADER: {result['file']} ({result['file_type']})")
+            elif result['modified']:
                 files_modified += 1
                 print(f"✅ ADDED HEADER: {result['file']} ({result['file_type']})")
             else:
@@ -284,13 +294,21 @@ def main():
     print("=" * 60)
     print(f"Total files processed: {len(code_files)}")
     print(f"Files with headers: {files_with_headers}")
-    print(f"Files needing headers: {files_needing_headers}")
-    print(f"Files modified: {files_modified}")
+    print(f"Files {'missing' if args.check else 'needing'} headers: {files_needing_headers}")
+    if not args.check:
+        print(f"Files modified: {files_modified}")
     print(f"Files with errors: {files_with_errors}")
     
     # Exit with error code if there were issues
     if files_with_errors > 0:
         sys.exit(1)
+    
+    # In check mode, exit with error if any files need headers
+    if args.check and files_needing_headers > 0:
+        print("\n❌ License header check failed: some files are missing headers")
+        sys.exit(1)
+    elif args.check:
+        print("\n✅ License header check passed: all files have headers")
 
 
 if __name__ == '__main__':
