@@ -147,6 +147,9 @@ nav:
 
 
 extra:
+  analytics:
+    provider: google
+    property: G-DTKRQXJ4QJ
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/isaac-for-healthcare
