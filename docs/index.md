@@ -15,9 +15,9 @@ NVIDIA Isaac for Healthcare is the three-computer solution for healthcare roboti
 
 Transform healthcare through the industry's first three-computer framework for medical robotics:
 
-- :material-brain: **Training Computer**: Pre-trained models and AI algorithms with MONAI
-- :material-cube-scan: **Simulation Computer**: Physics-based digital twins in Isaac Sim
-- :material-chip: **Edge Computer**: Real-time deployment with Holoscan
+- :material-brain: **Training Computer**: Pre-trained models and AI algorithms
+- :material-cube-scan: **Simulation Computer**: Physics-based digital twins
+- :material-chip: **Edge Computer**: Real-time deployment
 
 Test medical procedures without risk. Generate unlimited synthetic data. Deploy the same code from simulation to clinical environments. All powered by NVIDIA's proven robotics and AI infrastructure.
 
