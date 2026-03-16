@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Redirecting...</title>
+  <script>
+    // 1. Get the path the user was trying to visit (e.g., "/i4h-docs/workflows/")
+    var currentPath = window.location.pathname;
+    
+    // 2. Strip out the old repository name
+    var newPath = currentPath.replace('/i4h-docs', '');
+    
+    // 3. Keep any URL parameters or hash fragments (e.g., "?query=1" or "#section-2")
+    var searchAndHash = window.location.search + window.location.hash;
+    
+    // 4. Construct the new URL and redirect
+    var newUrl = "https://isaac-for-healthcare.github.io" + newPath + searchAndHash;
+    window.location.replace(newUrl);
+  </script>
+</head>
+<body>
+  <p>Our documentation has moved. You are being redirected...</p>
+  <p>If you are not redirected automatically, <a href="https://isaac-for-healthcare.github.io/">click here to go to the new homepage</a>.</p>
+</body>
+</html>
