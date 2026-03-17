@@ -4,22 +4,42 @@
   <meta charset="utf-8">
   <title>Redirecting...</title>
   <script>
-    // 1. Get the path the user was trying to visit (e.g., "/i4h-docs/workflows/")
-    var currentPath = window.location.pathname;
-    
-    // 2. Strip out the old repository name
-    var newPath = currentPath.replace('/i4h-docs', '');
-    
-    // 3. Keep any URL parameters or hash fragments (e.g., "?query=1" or "#section-2")
-    var searchAndHash = window.location.search + window.location.hash;
-    
-    // 4. Construct the new URL and redirect
-    var newUrl = "https://isaac-for-healthcare.github.io" + newPath + searchAndHash;
-    window.location.replace(newUrl);
+    (function () {
+      var base = "https://isaac-for-healthcare.github.io";
+      var p = window.location.pathname;
+      var sq = window.location.search + window.location.hash;
+
+      // Strip old repo prefixes so we work with the bare section path
+      p = p.replace(/^\/(i4h-docs|i4h)\//, "/");
+      p = p.replace(/\/+$/, "") || "/";
+
+      // Map old section names to current org-site sections
+      var sectionMap = [
+        ["/asset-catalog",      "/assets/"],
+        ["/sensor-simulation",  "/sensors/"],
+        ["/sdg",                "/data-generation/"],
+        ["/models",             "/policies/"],
+        ["/workflows",          "/workflows/"]
+      ];
+
+      var dest = base + "/";
+
+      for (var i = 0; i < sectionMap.length; i++) {
+        var old = sectionMap[i][0];
+        if (p === old || p.indexOf(old + "/") === 0) {
+          var tail = p.slice(old.length).replace(/^\//, "");
+          dest = base + sectionMap[i][1] + tail;
+          break;
+        }
+      }
+
+      window.location.replace(dest + sq);
+    })();
   </script>
 </head>
 <body>
-  <p>Our documentation has moved. You are being redirected...</p>
-  <p>If you are not redirected automatically, <a href="https://isaac-for-healthcare.github.io/">click here to go to the new homepage</a>.</p>
+  <p>Our documentation has moved. You are being redirected&hellip;</p>
+  <p>If you are not redirected automatically,
+     <a href="https://isaac-for-healthcare.github.io/">click here to go to the new documentation</a>.</p>
 </body>
 </html>
